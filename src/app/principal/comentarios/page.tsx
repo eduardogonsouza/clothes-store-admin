@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { CommentI } from "@/utils/types/comments";
 import ItemComentario from "@/components/ItemComments";
 import { ClotheI } from "@/utils/types/clothes";
+import axios from "axios";
 
 function ControleComentarios() {
   const [roupas, setRoupas] = useState<ClotheI[]>([]);
@@ -10,12 +11,16 @@ function ControleComentarios() {
 
   useEffect(() => {
     async function getClothes() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_API}/clothes`
-      );
-      const dados = await response.json();
-      console.log(dados);
-      setRoupas(dados);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_URL_API}/clothes`
+        );
+        const dados = response.data;
+        console.log(dados);
+        setRoupas(dados);
+      } catch (error) {
+        console.error("Error fetching clothes:", error);
+      }
     }
 
     getClothes();
@@ -24,15 +29,21 @@ function ControleComentarios() {
   useEffect(() => {
     if (roupas.length > 0) {
       async function fetchComentarios() {
-        const commentsPromises = roupas.map((roupa) =>
-          fetch(
-            `${process.env.NEXT_PUBLIC_URL_API}/comments/clothe/${roupa.id}`
-          ).then((res) => res.json())
-        );
+        try {
+          const commentsPromises = roupas.map((roupa) =>
+            axios
+              .get(
+                `${process.env.NEXT_PUBLIC_URL_API}/comments/clothe/${roupa.id}`
+              )
+              .then((res) => res.data)
+          );
 
-        const commentsArrays = await Promise.all(commentsPromises);
-        const allComentarios = commentsArrays.flat();
-        setComentarios(allComentarios);
+          const commentsArrays = await Promise.all(commentsPromises);
+          const allComentarios = commentsArrays.flat();
+          setComentarios(allComentarios);
+        } catch (error) {
+          console.error("Error fetching comments:", error);
+        }
       }
 
       fetchComentarios();

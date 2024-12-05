@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Toaster } from 'sonner'
+import { Toaster } from "sonner";
 
 export const metadata: Metadata = {
   title: "Admin: Revenda Avenida",
@@ -13,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-br">
+    <html lang="pt-br" suppressHydrationWarning>
       <body>
         {children}
         <Toaster richColors position="top-center" />

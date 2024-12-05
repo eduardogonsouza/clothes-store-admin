@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useState, useEffect } from "react";
 import { ClothingBrandI } from "@/utils/types/clothingBrand";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type Inputs = {
   name: string;
@@ -31,11 +32,10 @@ function NovaRoupa() {
   useEffect(() => {
     async function fetchBrands() {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_URL_API}/brands`
         );
-        const dados = await response.json();
-        setBrands(dados);
+        setBrands(response.data);
       } catch {
         toast.error("Erro ao carregar as marcas!");
       }
@@ -59,15 +59,14 @@ function NovaRoupa() {
     };
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL_API}/clothes`,
+        novaRoupa,
         {
-          method: "POST",
           headers: {
             "Content-type": "application/json",
             authtoken: `${Cookies.get("admin_logado_token")}`,
           },
-          body: JSON.stringify(novaRoupa),
         }
       );
 

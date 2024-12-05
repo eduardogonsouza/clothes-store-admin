@@ -5,6 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 type Inputs = {
   name: string;
@@ -24,15 +25,14 @@ function NovaMarca() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
+      const response = await axios.post(
         `${process.env.NEXT_PUBLIC_URL_API}/brands`,
+        data,
         {
-          method: "POST",
           headers: {
             "Content-type": "application/json",
             authtoken: `${Cookies.get("admin_logado_token")}`,
           },
-          body: JSON.stringify(data),
         }
       );
 

@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { FaShirt } from "react-icons/fa6";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 type Inputs = {
   email: string;
@@ -20,25 +21,32 @@ export default function Home() {
   }, []);
 
   async function verifyLogin(data: Inputs) {
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_URL_API}/admin/login`,
-      {
-        method: "POST",
-        headers: { "Content-type": "Application/json" },
-        body: JSON.stringify({ email: data.email, password: data.senha }),
+    try {
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_URL_API}/admin/login`,
+        {
+          email: data.email,
+          password: data.senha,
+        },
+        {
+          headers: { "Content-type": "Application/json" },
+        }
+      );
+
+      if (response.status === 200) {
+        const admin = response.data;
+
+        Cookies.set("admin_logado_id", admin.id);
+        Cookies.set("admin_logado_nome", admin.name);
+        Cookies.set("admin_logado_token", admin.authToken);
+
+        router.push("/principal");
+      } else if (response.status === 400) {
+        toast.error("Erro... Login ou senha incorretos");
       }
-    );
-
-    if (response.status == 200) {
-      const admin = await response.json();
-
-      Cookies.set("admin_logado_id", admin.id);
-      Cookies.set("admin_logado_nome", admin.name);
-      Cookies.set("admin_logado_token", admin.authToken);
-
-      router.push("/principal");
-    } else if (response.status == 400) {
-      toast.error("Erro... Login ou senha incorretos");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao tentar fazer login");
     }
   }
 

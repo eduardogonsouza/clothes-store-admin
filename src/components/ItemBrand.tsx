@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction } from "react";
 import { TiDeleteOutline } from "react-icons/ti";
 import { ClothingBrandI } from "@/utils/types/clothingBrand";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 function ItemBrand({
   brand,
@@ -15,10 +16,9 @@ function ItemBrand({
 }) {
   async function deleteBrand() {
     if (confirm(`Confirma a exclusão`)) {
-      const response = await fetch(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_URL_API}/brands/${brand.id}`,
         {
-          method: "DELETE",
           headers: {
             "Content-type": "application/json",
             authtoken: Cookies.get("admin_logado_token") as string,

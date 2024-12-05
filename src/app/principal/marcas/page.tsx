@@ -4,16 +4,23 @@ import Link from "next/link";
 
 import ItemBrand from "@/components/ItemBrand";
 import { ClothingBrandI } from "@/utils/types/clothingBrand";
+import axios from "axios";
 
 function BrandsPage() {
   const [marcas, setMarcas] = useState<ClothingBrandI[]>([]);
 
   useEffect(() => {
     async function getBrands() {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_URL_API}/brands`);
-      const dados = await response.json();
-      console.log(dados);
-      setMarcas(dados);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_URL_API}/brands`
+        );
+        const dados = response.data;
+        console.log(dados);
+        setMarcas(dados);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+      }
     }
     getBrands();
   }, []);

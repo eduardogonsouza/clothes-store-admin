@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import { CommentI } from "@/utils/types/comments";
 import { ClotheI } from "@/utils/types/clothes";
 import Image from "next/image";
+import axios from "axios";
 
 interface ListaComentarioProps {
   comentario: CommentI;
@@ -21,10 +22,9 @@ function ItemComment({
 }: ListaComentarioProps) {
   async function deleteComment() {
     if (confirm(`Confirma Exclusão do Comentário "${comentario.content}"?`)) {
-      const response = await fetch(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_URL_API}/comments/${comentario.id}`,
         {
-          method: "DELETE",
           headers: {
             "Content-type": "application/json",
             authtoken: Cookies.get("admin_logado_token") as string,

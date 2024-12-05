@@ -5,6 +5,7 @@ import { FaRegStar, FaStar } from "react-icons/fa";
 import { ClotheI } from "@/utils/types/clothes";
 import Image from "next/image";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 function ItemRoupa({
   roupa,
@@ -17,10 +18,9 @@ function ItemRoupa({
 }) {
   async function deleteCloth() {
     if (confirm(`Confirma a exclusão`)) {
-      const response = await fetch(
+      const response = await axios.delete(
         `${process.env.NEXT_PUBLIC_URL_API}/clothes/${roupa.id}`,
         {
-          method: "DELETE",
           headers: {
             "Content-type": "application/json",
             authtoken: Cookies.get("admin_logado_token") as string,
@@ -39,18 +39,16 @@ function ItemRoupa({
   }
 
   async function toggleHighlight() {
-    const response = await fetch(
+    const response = await axios.put(
       `${process.env.NEXT_PUBLIC_URL_API}/clothes/${roupa.id}`,
+      { ...roupa, highlight: !roupa.highlight },
       {
-        method: "PUT",
         headers: {
-          "Content-type": "Application/json",
+          "Content-type": "application/json",
           authtoken: Cookies.get("admin_logado_token") as string,
         },
-        body: JSON.stringify({ ...roupa, highlight: !roupa.highlight }),
       }
     );
-    console.log(response);
 
     if (response.status == 200) {
       const roupas2 = roupas.map((x) => {

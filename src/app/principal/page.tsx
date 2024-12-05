@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Chart } from "react-google-charts";
 import Cookies from "js-cookie";
+import axios from "axios";
 
 type ClothesByBrand = {
   id: number;
@@ -36,17 +37,16 @@ export default function Main() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `${process.env.NEXT_PUBLIC_URL_API}/admin/analytics`,
           {
-            method: "GET",
             headers: {
               "Content-type": "application/json",
               authtoken: Cookies.get("admin_logado_token") as string,
             },
           }
         );
-        const data: AnalyticsData = await response.json();
+        const data: AnalyticsData = response.data;
 
         const generalData: GeneralData = {
           comments: data.totalComments,

@@ -4,18 +4,23 @@ import Link from "next/link";
 
 import ItemClothes from "@/components/ItemClothes";
 import { ClotheI } from "@/utils/types/clothes";
+import axios from "axios";
 
 function CadRoupas() {
   const [roupas, setRoupas] = useState<ClotheI[]>([]);
 
   useEffect(() => {
     async function getClothes() {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_URL_API}/clothes`
-      );
-      const dados = await response.json();
-      console.log(dados);
-      setRoupas(dados);
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_URL_API}/clothes`
+        );
+        const dados = response.data;
+        console.log(dados);
+        setRoupas(dados);
+      } catch (error) {
+        console.error("Error fetching clothes:", error);
+      }
     }
     getClothes();
   }, []);
